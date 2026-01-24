@@ -1,0 +1,4 @@
+source,filename,records,columns,size_kb,status
+Exercise Database,exercise_database.csv,2918,9,657.27,Success ✓
+Reddit Posts,reddit_posts.csv,20,10,7.86,Success ✓
+Pubmed Articles,pubmed_articles.csv,15,9,4.32,Success ✓
