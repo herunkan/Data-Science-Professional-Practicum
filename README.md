@@ -7,29 +7,6 @@ This repository contains lab assignments and projects for **DSCI 560: Data Scien
 
 ---
 
-## 📂 Repository Structure
-
-```
-DSCI 560/
-├── Lab1/               # Data Quality & CleanML
-│   ├── CleanML.pdf
-│   ├── CleanML_ICDE2021.pdf
-│   ├── Lab1_HerunKan.pdf
-│   └── lab1-s26.pdf
-│
-├── Lab2/               # Multi-Source Data Collection
-│   ├── Data/
-│   │   ├── megaGymDataset.csv
-│   │   └── collected_fitness_data/
-│   ├── Scipts/
-│   │   └── lab2-solution.py
-│   └── lab2-s26.pdf
-│
-└── README.md
-```
-
----
-
 ## 🧪 Labs Overview
 
 | Lab | Topic | Description |
@@ -62,18 +39,4 @@ cd Data-Science-Professional-Practicum
 # Install dependencies (for Lab 2)
 pip install pandas requests beautifulsoup4
 ```
-
----
-
-## 👤 Author
-
-**Herun Kan**  
-M.S. in Applied Data Science  
-University of Southern California
-
----
-
-## 📄 License
-
-This project is for educational purposes as part of USC coursework.
 
