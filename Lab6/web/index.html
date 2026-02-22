@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 6 — Oil Wells Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <h1>North Dakota Oil Wells</h1>
+        <p>DSCI 560 Lab 6 — Group 6 (The Coach)</p>
+        <div id="stats"></div>
+    </header>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([47.5, -103.0], 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 18,
+        }).addTo(map);
+
+        function buildPopup(w) {
+            let html = `<div class="popup-content">`;
+            html += `<h3>${w.well_name}</h3>`;
+            html += `<table>`;
+            html += `<tr><th>NDIC #</th><td>${w.ndic_file_number}</td></tr>`;
+            html += `<tr><th>API #</th><td>${w.api_number}</td></tr>`;
+            html += `<tr><th>Operator</th><td>${w.operator}</td></tr>`;
+            html += `<tr><th>County</th><td>${w.county}</td></tr>`;
+            html += `<tr><th>Field</th><td>${w.field_name}</td></tr>`;
+            html += `<tr><th>Section</th><td>${w.section}</td></tr>`;
+            html += `<tr><th>Township</th><td>${w.township}</td></tr>`;
+            html += `<tr><th>Range</th><td>${w.range_val}</td></tr>`;
+            html += `<tr><th>Latitude</th><td>${w.latitude}</td></tr>`;
+            html += `<tr><th>Longitude</th><td>${w.longitude}</td></tr>`;
+            html += `<tr><th>Status</th><td>${w.well_status}</td></tr>`;
+            html += `<tr><th>Type</th><td>${w.well_type}</td></tr>`;
+            html += `<tr><th>Closest City</th><td>${w.closest_city}</td></tr>`;
+            html += `<tr><th>Oil Produced</th><td>${w.oil_produced}</td></tr>`;
+            html += `<tr><th>Gas Produced</th><td>${w.gas_produced}</td></tr>`;
+            html += `</table>`;
+
+            if (w.stimulation_data && w.stimulation_data.length > 0) {
+                html += `<h4>Stimulation Data</h4>`;
+                for (const s of w.stimulation_data) {
+                    html += `<table class="stim-table">`;
+                    html += `<tr><th>Formation</th><td>${s.formation}</td></tr>`;
+                    html += `<tr><th>Treatment</th><td>${s.treatment_type}</td></tr>`;
+                    html += `<tr><th>Stages</th><td>${s.stimulation_stages}</td></tr>`;
+                    html += `<tr><th>Volume</th><td>${s.volume} ${s.volume_units}</td></tr>`;
+                    html += `<tr><th>Proppant (lbs)</th><td>${s.lbs_proppant}</td></tr>`;
+                    html += `<tr><th>Max Pressure (PSI)</th><td>${s.max_treatment_pressure}</td></tr>`;
+                    html += `<tr><th>Max Rate (BBL/min)</th><td>${s.max_treatment_rate}</td></tr>`;
+                    html += `<tr><th>Top (ft)</th><td>${s.top_ft}</td></tr>`;
+                    html += `<tr><th>Bottom (ft)</th><td>${s.bottom_ft}</td></tr>`;
+                    html += `</table>`;
+                }
+            }
+            html += `</div>`;
+            return html;
+        }
+
+        const pinIcon = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+        });
+
+        fetch('data/wells.json')
+            .then(r => r.json())
+            .then(wells => {
+                let plotted = 0;
+                const bounds = [];
+                for (const w of wells) {
+                    if (w.latitude === 0 && w.longitude === 0) continue;
+                    const marker = L.marker([w.latitude, w.longitude], { icon: pinIcon })
+                        .addTo(map)
+                        .bindPopup(buildPopup(w), { maxWidth: 400, maxHeight: 400 });
+                    bounds.push([w.latitude, w.longitude]);
+                    plotted++;
+                }
+                document.getElementById('stats').textContent =
+                    `${wells.length} wells loaded, ${plotted} with coordinates plotted on map`;
+                if (bounds.length > 0) {
+                    map.fitBounds(bounds, { padding: [30, 30] });
+                }
+            })
+            .catch(err => {
+                document.getElementById('stats').textContent = 'Error loading data: ' + err.message;
+                console.error(err);
+            });
+    </script>
+</body>
+</html>
